@@ -1,0 +1,5 @@
+GET  {{baseUrl}}/reviews?page=1&per_page=20&orderBy=status&sortedBy=asc
+Accept: application/json
+
+###
+GET {{baseUrl}}/products?per_page=16&page=1&orderBy=id&sortedBy=desc&searchJoin=and&search=status:0,1;city_id:11354;mil:50 HTTP/1.1

@@ -1,0 +1,38 @@
+name: Development-Deploy
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Copy repository contents via scp
+      uses: appleboy/scp-action@master
+      with:
+        HOST: ${{ secrets.DEV_HOST }}
+        USERNAME: ${{ secrets.DEV_USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.DEV_PASSWORD }}
+        source: "."
+        target: "/home/apps/backend"
+
+    - name: Building LARAVEL APP
+      uses: appleboy/ssh-action@master
+      with:
+        HOST: ${{ secrets.DEV_HOST }}
+        USERNAME: ${{ secrets.DEV_USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.DEV_PASSWORD }}
+        script: |
+          cd /home/apps/backend
+          composer install
+          php artisan migrate
+          php artisan optimize
+          php artisan config:cache
+          php artisan route:cache
